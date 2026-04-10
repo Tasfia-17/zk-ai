@@ -14,6 +14,10 @@
 
 ---
 
+> Demo video: [demo.mp4](demo.mp4) (2 minutes)
+
+---
+
 ## What It Is
 
 ZK-AI Tribunal is a 3D social deduction game where an AI referee watches every player, scores their behavior, and generates a zero-knowledge proof of its verdict - then settles it on the Tezos EVM (Etherlink) blockchain. Players can verify the AI was fair without ever seeing the model weights or raw scores.
