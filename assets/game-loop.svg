@@ -1,0 +1,22 @@
+<svg width="500" height="90" viewBox="0 0 500 90" xmlns="http://www.w3.org/2000/svg" font-family="Courier New,monospace">
+  <rect width="500" height="90" rx="12" fill="#010208"/>
+  <rect x="10" y="20" width="100" height="50" rx="10" fill="rgba(0,255,204,0.07)" stroke="#00ffcc" stroke-width="1"/>
+  <text x="60" y="42" text-anchor="middle" font-size="10" fill="#00ffcc">Discussion</text>
+  <text x="60" y="57" text-anchor="middle" font-size="9" fill="#445566">60 seconds</text>
+  <text x="60" y="68" text-anchor="middle" font-size="8" fill="#333333">observe NPCs</text>
+  <polygon points="114,45 126,41 126,49" fill="#00ffcc" opacity="0.5"/>
+  <rect x="130" y="20" width="100" height="50" rx="10" fill="rgba(0,136,255,0.07)" stroke="#0088ff" stroke-width="1"/>
+  <text x="180" y="42" text-anchor="middle" font-size="10" fill="#0088ff">Voting</text>
+  <text x="180" y="57" text-anchor="middle" font-size="9" fill="#445566">30 seconds</text>
+  <text x="180" y="68" text-anchor="middle" font-size="8" fill="#333333">AI analyzes</text>
+  <polygon points="234,45 246,41 246,49" fill="#0088ff" opacity="0.5"/>
+  <rect x="250" y="20" width="100" height="50" rx="10" fill="rgba(170,0,255,0.07)" stroke="#aa00ff" stroke-width="1"/>
+  <text x="300" y="42" text-anchor="middle" font-size="10" fill="#aa00ff">Tribunal</text>
+  <text x="300" y="57" text-anchor="middle" font-size="9" fill="#445566">ZK proof</text>
+  <text x="300" y="68" text-anchor="middle" font-size="8" fill="#333333">~2 seconds</text>
+  <polygon points="354,45 366,41 366,49" fill="#aa00ff" opacity="0.5"/>
+  <rect x="370" y="20" width="120" height="50" rx="10" fill="rgba(0,255,136,0.07)" stroke="#00ff88" stroke-width="1"/>
+  <text x="430" y="42" text-anchor="middle" font-size="10" fill="#00ff88">Verdict</text>
+  <text x="430" y="57" text-anchor="middle" font-size="9" fill="#445566">Etherlink tx</text>
+  <text x="430" y="68" text-anchor="middle" font-size="8" fill="#333333">accept / dispute</text>
+</svg>

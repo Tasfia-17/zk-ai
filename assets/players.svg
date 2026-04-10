@@ -1,0 +1,50 @@
+<svg width="520" height="140" viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" font-family="Courier New,monospace">
+  <rect width="520" height="140" rx="12" fill="#010208"/>
+  <g transform="translate(70,30)">
+    <circle cx="0" cy="0" r="22" fill="rgba(0,255,204,0.08)" stroke="#00ffcc" stroke-width="1.5"/>
+    <circle cx="0" cy="-7" r="7" fill="#00ffcc" opacity="0.7"/>
+    <rect x="-7" y="2" width="14" height="10" rx="3" fill="#00ffcc" opacity="0.5"/>
+    <line x1="-7" y1="7" x2="-13" y2="14" stroke="#00ffcc" stroke-width="2" opacity="0.5"/>
+    <line x1="7" y1="7" x2="13" y2="14" stroke="#00ffcc" stroke-width="2" opacity="0.5"/>
+    <line x1="-4" y1="12" x2="-4" y2="20" stroke="#00ffcc" stroke-width="2" opacity="0.5"/>
+    <line x1="4" y1="12" x2="4" y2="20" stroke="#00ffcc" stroke-width="2" opacity="0.5"/>
+    <text x="0" y="42" text-anchor="middle" font-size="10" fill="#00ffcc" letter-spacing="1">INNOCENT</text>
+    <text x="0" y="55" text-anchor="middle" font-size="8" fill="#445566">normal behavior</text>
+    <text x="0" y="66" text-anchor="middle" font-size="8" fill="#445566">random votes</text>
+  </g>
+  <g transform="translate(200,30)">
+    <circle cx="0" cy="0" r="22" fill="rgba(255,50,50,0.08)" stroke="#ff4444" stroke-width="1.5"/>
+    <circle cx="0" cy="-7" r="7" fill="#ff4444" opacity="0.7"/>
+    <rect x="-7" y="2" width="14" height="10" rx="3" fill="#ff4444" opacity="0.5"/>
+    <line x1="-7" y1="7" x2="-13" y2="14" stroke="#ff4444" stroke-width="2" opacity="0.5"/>
+    <line x1="7" y1="7" x2="13" y2="14" stroke="#ff4444" stroke-width="2" opacity="0.5"/>
+    <line x1="-4" y1="12" x2="-4" y2="20" stroke="#ff4444" stroke-width="2" opacity="0.5"/>
+    <line x1="4" y1="12" x2="4" y2="20" stroke="#ff4444" stroke-width="2" opacity="0.5"/>
+    <text x="0" y="42" text-anchor="middle" font-size="10" fill="#ff4444" letter-spacing="1">TRAITOR</text>
+    <text x="0" y="55" text-anchor="middle" font-size="8" fill="#445566">colludes secretly</text>
+    <text x="0" y="66" text-anchor="middle" font-size="8" fill="#445566">targets innocents</text>
+  </g>
+  <g transform="translate(330,30)">
+    <circle cx="0" cy="0" r="22" fill="rgba(255,102,0,0.08)" stroke="#ff6600" stroke-width="1.5"/>
+    <rect x="-9" y="-16" width="18" height="14" rx="3" fill="#ff6600" opacity="0.6"/>
+    <circle cx="-4" cy="-11" r="2.5" fill="#010208"/>
+    <circle cx="4" cy="-11" r="2.5" fill="#010208"/>
+    <rect x="-5" y="-5" width="10" height="2" rx="1" fill="#010208"/>
+    <rect x="-7" y="2" width="14" height="10" rx="3" fill="#ff6600" opacity="0.4"/>
+    <line x1="-7" y1="7" x2="-13" y2="14" stroke="#ff6600" stroke-width="2" opacity="0.5"/>
+    <line x1="7" y1="7" x2="13" y2="14" stroke="#ff6600" stroke-width="2" opacity="0.5"/>
+    <text x="0" y="42" text-anchor="middle" font-size="10" fill="#ff6600" letter-spacing="1">BOT</text>
+    <text x="0" y="55" text-anchor="middle" font-size="8" fill="#445566">low variance</text>
+    <text x="0" y="66" text-anchor="middle" font-size="8" fill="#445566">regular timing</text>
+  </g>
+  <g transform="translate(460,30)">
+    <circle cx="0" cy="0" r="22" fill="rgba(170,0,255,0.08)" stroke="#aa00ff" stroke-width="1.5"/>
+    <polygon points="0,-16 10,4 -10,4" fill="none" stroke="#aa00ff" stroke-width="1.5" opacity="0.8"/>
+    <circle cx="0" cy="-4" r="5" fill="#aa00ff" opacity="0.4"/>
+    <circle cx="0" cy="-4" r="2" fill="#aa00ff" opacity="0.9"/>
+    <text x="0" y="42" text-anchor="middle" font-size="10" fill="#aa00ff" letter-spacing="1">AI REFEREE</text>
+    <text x="0" y="55" text-anchor="middle" font-size="8" fill="#445566">watches all</text>
+    <text x="0" y="66" text-anchor="middle" font-size="8" fill="#445566">proves verdict</text>
+  </g>
+  <text x="260" y="128" text-anchor="middle" font-size="9" fill="#333333" letter-spacing="3">6 PLAYERS · 1 TRAITOR · 1 BOT · 4 INNOCENTS</text>
+</svg>

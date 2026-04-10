@@ -1,0 +1,28 @@
+<svg width="500" height="110" viewBox="0 0 500 110" xmlns="http://www.w3.org/2000/svg" font-family="Courier New,monospace">
+  <rect width="500" height="110" rx="12" fill="#010208"/>
+  <rect x="10" y="14" width="90" height="82" rx="8" fill="rgba(0,255,204,0.05)" stroke="#00ffcc" stroke-width="0.8"/>
+  <text x="55" y="34" text-anchor="middle" font-size="9" fill="#00ffcc">Three.js</text>
+  <text x="55" y="50" text-anchor="middle" font-size="8" fill="#445566">0.183</text>
+  <text x="55" y="64" text-anchor="middle" font-size="8" fill="#445566">3D engine</text>
+  <text x="55" y="78" text-anchor="middle" font-size="8" fill="#445566">WebGL</text>
+  <rect x="110" y="14" width="90" height="82" rx="8" fill="rgba(0,136,255,0.05)" stroke="#0088ff" stroke-width="0.8"/>
+  <text x="155" y="34" text-anchor="middle" font-size="9" fill="#0088ff">Solidity</text>
+  <text x="155" y="50" text-anchor="middle" font-size="8" fill="#445566">0.8.20</text>
+  <text x="155" y="64" text-anchor="middle" font-size="8" fill="#445566">contract</text>
+  <text x="155" y="78" text-anchor="middle" font-size="8" fill="#445566">Hardhat 3</text>
+  <rect x="210" y="14" width="90" height="82" rx="8" fill="rgba(170,0,255,0.05)" stroke="#aa00ff" stroke-width="0.8"/>
+  <text x="255" y="34" text-anchor="middle" font-size="9" fill="#aa00ff">ethers.js</text>
+  <text x="255" y="50" text-anchor="middle" font-size="8" fill="#445566">v6</text>
+  <text x="255" y="64" text-anchor="middle" font-size="8" fill="#445566">wallet</text>
+  <text x="255" y="78" text-anchor="middle" font-size="8" fill="#445566">MetaMask</text>
+  <rect x="310" y="14" width="90" height="82" rx="8" fill="rgba(255,102,0,0.05)" stroke="#ff6600" stroke-width="0.8"/>
+  <text x="355" y="34" text-anchor="middle" font-size="9" fill="#ff6600">Vite 7</text>
+  <text x="355" y="50" text-anchor="middle" font-size="8" fill="#445566">build</text>
+  <text x="355" y="64" text-anchor="middle" font-size="8" fill="#445566">ES modules</text>
+  <text x="355" y="78" text-anchor="middle" font-size="8" fill="#445566">HMR</text>
+  <rect x="410" y="14" width="80" height="82" rx="8" fill="rgba(0,255,136,0.05)" stroke="#00ff88" stroke-width="0.8"/>
+  <text x="450" y="34" text-anchor="middle" font-size="9" fill="#00ff88">Etherlink</text>
+  <text x="450" y="50" text-anchor="middle" font-size="8" fill="#445566">128123</text>
+  <text x="450" y="64" text-anchor="middle" font-size="8" fill="#445566">Tezos EVM</text>
+  <text x="450" y="78" text-anchor="middle" font-size="8" fill="#445566">500ms block</text>
+</svg>

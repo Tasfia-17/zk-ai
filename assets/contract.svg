@@ -1,0 +1,20 @@
+<svg width="500" height="160" viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" font-family="Courier New,monospace">
+  <rect width="500" height="160" rx="12" fill="#010208"/>
+  <text x="250" y="22" text-anchor="middle" font-size="11" fill="#aa00ff" letter-spacing="3">TribunalVerifier.sol</text>
+  <rect x="14" y="32" width="220" height="36" rx="7" fill="rgba(0,255,204,0.06)" stroke="#00ffcc" stroke-width="0.8"/>
+  <text x="124" y="48" text-anchor="middle" font-size="9" fill="#00ffcc">recordVerdict(proofId, round,</text>
+  <text x="124" y="62" text-anchor="middle" font-size="9" fill="#445566">commitment, analysisHash, guilty)</text>
+  <rect x="14" y="76" width="220" height="36" rx="7" fill="rgba(255,102,0,0.06)" stroke="#ff6600" stroke-width="0.8"/>
+  <text x="124" y="92" text-anchor="middle" font-size="9" fill="#ff6600">disputeVerdict(proofId)</text>
+  <text x="124" y="106" text-anchor="middle" font-size="9" fill="#445566">1-hour dispute window</text>
+  <rect x="14" y="120" width="220" height="30" rx="7" fill="rgba(0,136,255,0.06)" stroke="#0088ff" stroke-width="0.8"/>
+  <text x="124" y="140" text-anchor="middle" font-size="9" fill="#0088ff">verifyCommitment(commitment, score, blind)</text>
+  <rect x="260" y="32" width="226" height="118" rx="7" fill="rgba(0,255,204,0.03)" stroke="#333333" stroke-width="0.8"/>
+  <text x="373" y="52" text-anchor="middle" font-size="10" fill="#cccccc">Etherlink Testnet</text>
+  <text x="373" y="68" text-anchor="middle" font-size="9" fill="#445566">chainId: 128123</text>
+  <text x="373" y="84" text-anchor="middle" font-size="9" fill="#445566">RPC: thirdweb.com</text>
+  <text x="373" y="100" text-anchor="middle" font-size="9" fill="#445566">Solidity 0.8.20</text>
+  <text x="373" y="116" text-anchor="middle" font-size="9" fill="#445566">Hardhat 3 deploy</text>
+  <text x="373" y="132" text-anchor="middle" font-size="9" fill="#00ffcc">wallet_addEthereumChain</text>
+  <text x="373" y="144" text-anchor="middle" font-size="9" fill="#445566">auto-adds to MetaMask</text>
+</svg>
