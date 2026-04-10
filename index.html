@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ZK-AI Tribunal</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; font-family: 'Courier New', monospace; }
+    canvas { display: block; }
+
+    /* ── HUD ── */
+    #hud {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 14px 20px; z-index: 10; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+    }
+    #hud-left { display: flex; flex-direction: column; gap: 6px; }
+    #hud-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .hud-label {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: #00ffcc; opacity: 0.7;
+    }
+    .hud-value {
+      font-size: 22px; font-weight: bold; color: #fff;
+      text-shadow: 0 0 12px #00ffcc;
+    }
+    #phase-badge {
+      padding: 4px 12px; border-radius: 20px; font-size: 12px;
+      letter-spacing: 1px; font-weight: bold;
+      background: rgba(0,255,204,0.15); border: 1px solid #00ffcc;
+      color: #00ffcc;
+    }
+    #zk-status {
+      font-size: 11px; color: #888; letter-spacing: 1px;
+    }
+    #zk-status.verified { color: #00ffcc; text-shadow: 0 0 8px #00ffcc; }
+    #zk-status.pending  { color: #ffaa00; }
+    #zk-status.failed   { color: #ff4444; }
+    #wallet-status {
+      font-size: 10px; color: #555; letter-spacing: 1px; cursor: pointer;
+      transition: color 0.2s;
+    }
+    #wallet-status:hover { color: #00ffcc; }
+    #wallet-status.connected { color: #00ff88; }
+
+    /* ── PLAYER CARDS ── */
+    #player-cards {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: center; gap: 8px;
+      padding: 12px 16px; z-index: 10;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+      overflow-x: auto;
+    }
+    .player-card {
+      min-width: 80px; padding: 8px 10px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(10,10,30,0.8);
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .player-card:hover { border-color: rgba(0,255,204,0.5); transform: translateY(-2px); }
+    .player-card.selected { border-color: #00ffcc; box-shadow: 0 0 12px rgba(0,255,204,0.3); }
+    .player-card.eliminated { opacity: 0.4; }
+    .player-card.suspect { border-color: #ff6600; box-shadow: 0 0 12px rgba(255,102,0,0.4); }
+    .player-card.innocent { border-color: #00ff88; }
+    .card-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .card-name { font-size: 10px; color: #ccc; letter-spacing: 1px; }
+    .card-role { font-size: 9px; color: #666; }
+    .card-trust {
+      font-size: 10px; font-weight: bold;
+      padding: 2px 6px; border-radius: 4px;
+      background: rgba(0,255,204,0.1); color: #00ffcc;
+    }
+
+    /* ── VOTE PANEL ── */
+    #vote-panel {
+      position: fixed; right: 16px; top: 50%; transform: translateY(-50%);
+      width: 220px; z-index: 15;
+      background: rgba(5,5,20,0.92);
+      border: 1px solid rgba(0,255,204,0.3);
+      border-radius: 14px; padding: 16px;
+      backdrop-filter: blur(10px);
+      display: none;
+    }
+    #vote-panel.visible { display: block; }
+    #vote-panel h3 {
+      color: #00ffcc; font-size: 13px; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 12px;
+      text-align: center;
+    }
+    .vote-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 8px; margin-bottom: 6px;
+      cursor: pointer; border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s;
+    }
+    .vote-option:hover { background: rgba(0,255,204,0.1); border-color: #00ffcc; }
+    .vote-option .vo-name { font-size: 12px; color: #fff; flex: 1; }
+    .vote-option .vo-sus { font-size: 10px; color: #ff6600; }
+    #vote-confirm {
+      width: 100%; margin-top: 10px; padding: 10px;
+      background: linear-gradient(135deg, #00ffcc, #0088ff);
+      border: none; border-radius: 8px; color: #000;
+      font-weight: bold; font-size: 13px; cursor: pointer;
+      letter-spacing: 1px; transition: opacity 0.2s;
+    }
+    #vote-confirm:hover { opacity: 0.85; }
+    #vote-confirm:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── AI TRIBUNAL PANEL ── */
+    #tribunal-panel {
+      position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: min(520px, 92vw); z-index: 30;
+      background: rgba(2,4,18,0.97);
+      border: 1px solid rgba(0,255,204,0.4);
+      border-radius: 18px; padding: 28px;
+      backdrop-filter: blur(20px);
+      display: none;
+      box-shadow: 0 0 60px rgba(0,255,204,0.15), inset 0 0 40px rgba(0,0,50,0.5);
+    }
+    #tribunal-panel.visible { display: block; }
+    #tribunal-panel h2 {
+      color: #00ffcc; font-size: 18px; letter-spacing: 3px;
+      text-transform: uppercase; text-align: center; margin-bottom: 6px;
+    }
+    #tribunal-subtitle {
+      text-align: center; color: #555; font-size: 11px;
+      letter-spacing: 2px; margin-bottom: 20px;
+    }
+    #proof-display {
+      background: rgba(0,255,204,0.04);
+      border: 1px solid rgba(0,255,204,0.15);
+      border-radius: 10px; padding: 14px; margin-bottom: 16px;
+      font-size: 11px; color: #888; line-height: 1.7;
+      font-family: 'Courier New', monospace;
+    }
+    #proof-display .proof-line { margin-bottom: 4px; }
+    #proof-display .proof-key { color: #00ffcc; }
+    #proof-display .proof-val { color: #aaa; }
+    #proof-display .proof-hash { color: #0088ff; word-break: break-all; }
+    #verdict-box {
+      text-align: center; padding: 16px;
+      border-radius: 10px; margin-bottom: 16px;
+    }
+    #verdict-box.guilty {
+      background: rgba(255,50,50,0.1); border: 1px solid rgba(255,50,50,0.4);
+    }
+    #verdict-box.innocent {
+      background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.3);
+    }
+    #verdict-name { font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 4px; }
+    #verdict-label { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; }
+    #verdict-label.guilty { color: #ff4444; }
+    #verdict-label.innocent { color: #00ff88; }
+    #verdict-reason { font-size: 12px; color: #888; margin-top: 8px; line-height: 1.5; }
+    #tribunal-actions { display: flex; gap: 10px; }
+    .tribunal-btn {
+      flex: 1; padding: 11px; border-radius: 8px;
+      font-size: 12px; font-weight: bold; letter-spacing: 1px;
+      cursor: pointer; border: none; transition: all 0.2s;
+    }
+    #btn-accept {
+      background: linear-gradient(135deg, #00ffcc, #0088ff); color: #000;
+    }
+    #btn-dispute {
+      background: rgba(255,100,0,0.15); color: #ff6600;
+      border: 1px solid rgba(255,100,0,0.4);
+    }
+    #btn-accept:hover { opacity: 0.85; }
+    #btn-dispute:hover { background: rgba(255,100,0,0.25); }
+
+    /* ── CHAT LOG ── */
+    #chat-log {
+      position: fixed; left: 16px; top: 50%; transform: translateY(-50%);
+      width: 200px; max-height: 300px; z-index: 10;
+      background: rgba(5,5,20,0.85);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 12px;
+      overflow-y: auto; backdrop-filter: blur(8px);
+    }
+    #chat-log h4 {
+      color: #555; font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .chat-msg {
+      font-size: 11px; margin-bottom: 6px; line-height: 1.4;
+      padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .chat-msg .msg-author { font-weight: bold; }
+    .chat-msg .msg-text { color: #999; }
+    .chat-msg.system .msg-text { color: #00ffcc; font-style: italic; }
+    .chat-msg.accusation .msg-text { color: #ff6600; }
+
+    /* ── PHASE OVERLAY ── */
+    #phase-overlay {
+      position: fixed; inset: 0; z-index: 25;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      background: rgba(0,0,0,0.85);
+      pointer-events: none; opacity: 0;
+      transition: opacity 0.4s;
+    }
+    #phase-overlay.show { opacity: 1; pointer-events: all; }
+    #phase-title {
+      font-size: clamp(32px, 8vw, 64px); font-weight: bold;
+      letter-spacing: 6px; text-transform: uppercase;
+      background: linear-gradient(135deg, #00ffcc, #0088ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    #phase-desc { font-size: 16px; color: #888; letter-spacing: 2px; }
+
+    /* ── TITLE SCREEN ── */
+    #title-screen {
+      position: fixed; inset: 0; z-index: 40;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      overflow: hidden;
+    }
+    #title-screen.hidden { display: none; }
+
+    /* 3D canvas sits behind all title content */
+    #title-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    /* Vignette overlay */
+    #title-screen::after {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background: radial-gradient(ellipse at center,
+        transparent 30%, rgba(0,0,0,0.75) 100%);
+      pointer-events: none;
+    }
+
+    /* All title content sits above canvas */
+    .title-content {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      padding: 20px;
+    }
+
+    /* Hackathon badge */
+    .hackathon-badge {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 14px; border-radius: 20px; margin-bottom: 28px;
+      border: 1px solid rgba(0,255,204,0.25);
+      background: rgba(0,255,204,0.06);
+      font-size: 10px; letter-spacing: 2px; color: #00ffcc;
+      animation: fadeSlideDown 0.6s ease both;
+    }
+    .hackathon-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #00ffcc;
+      box-shadow: 0 0 6px #00ffcc;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .title-logo {
+      font-size: clamp(36px, 8vw, 72px); font-weight: 900;
+      letter-spacing: 4px; text-transform: uppercase; line-height: 1;
+      background: linear-gradient(135deg, #00ffcc 0%, #0088ff 50%, #aa00ff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      animation: fadeSlideDown 0.7s 0.1s ease both;
+      filter: drop-shadow(0 0 30px rgba(0,255,204,0.3));
+    }
+    .title-sub {
+      font-size: clamp(11px, 1.8vw, 14px); color: #556; letter-spacing: 5px;
+      text-transform: uppercase; margin-bottom: 36px;
+      animation: fadeSlideDown 0.7s 0.2s ease both;
+    }
+
+    /* Stats row */
+    .title-stats {
+      display: flex; gap: clamp(16px, 4vw, 40px); margin-bottom: 36px;
+      animation: fadeSlideDown 0.7s 0.3s ease both;
+    }
+    .stat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .stat-value {
+      font-size: clamp(20px, 3.5vw, 30px); font-weight: 800; color: #fff;
+      text-shadow: 0 0 20px rgba(0,255,204,0.5);
+    }
+    .stat-label { font-size: 9px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+    .stat-divider { width: 1px; background: rgba(255,255,255,0.08); align-self: stretch; }
+
+    /* Feature chips */
+    .title-features {
+      display: flex; gap: 10px; margin-bottom: 36px; flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeSlideDown 0.7s 0.4s ease both;
+    }
+    .feature-chip {
+      padding: 7px 16px; border-radius: 20px; font-size: 11px;
+      letter-spacing: 1px; border: 1px solid rgba(0,255,204,0.2);
+      color: #00ffcc; background: rgba(0,255,204,0.05);
+      transition: all 0.2s;
+    }
+    .feature-chip:hover {
+      background: rgba(0,255,204,0.12); border-color: rgba(0,255,204,0.5);
+      transform: translateY(-2px);
+    }
+
+    /* CTA button */
+    #btn-start {
+      padding: 16px 52px; font-size: 15px; font-weight: 800;
+      letter-spacing: 4px; text-transform: uppercase;
+      background: linear-gradient(135deg, #00ffcc, #0088ff);
+      border: none; border-radius: 12px; color: #000;
+      cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 0 40px rgba(0,255,204,0.35), 0 4px 20px rgba(0,0,0,0.5);
+      animation: fadeSlideDown 0.7s 0.5s ease both;
+      position: relative; overflow: hidden;
+    }
+    #btn-start::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    #btn-start:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 0 60px rgba(0,255,204,0.55), 0 8px 30px rgba(0,0,0,0.5);
+    }
+    #btn-start:hover::before { opacity: 1; }
+    #btn-start:active { transform: translateY(0) scale(0.98); }
+
+    /* Chain + compliance badges */
+    .title-footer {
+      margin-top: 22px; display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      animation: fadeSlideDown 0.7s 0.6s ease both;
+    }
+    .chain-badge {
+      font-size: 11px; color: #444; letter-spacing: 2px;
+    }
+    .chain-badge span { color: #00ffcc; }
+    .compliance-row {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    }
+    .compliance-chip {
+      font-size: 9px; color: #444; letter-spacing: 1px;
+      padding: 3px 10px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── GAME OVER ── */
+    #gameover-overlay {
+      position: fixed; inset: 0; z-index: 35;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      background: rgba(0,0,0,0.9);
+    }
+    #gameover-overlay.hidden { display: none; }
+    #gameover-overlay h1 {
+      font-size: clamp(32px, 8vw, 60px); letter-spacing: 4px;
+      background: linear-gradient(135deg, #00ffcc, #0088ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+    #gameover-result { font-size: 18px; color: #aaa; margin-bottom: 8px; }
+    #gameover-stats {
+      font-size: 13px; color: #555; margin-bottom: 32px;
+      text-align: center; line-height: 2;
+    }
+    #btn-restart {
+      padding: 14px 40px; font-size: 14px; font-weight: bold;
+      letter-spacing: 2px; background: linear-gradient(135deg, #00ffcc, #0088ff);
+      border: none; border-radius: 8px; color: #000; cursor: pointer;
+    }
+
+    /* ── PROOF TICKER ── */
+    #proof-ticker {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+      z-index: 10; font-size: 10px; color: #00ffcc;
+      letter-spacing: 1px; opacity: 0; transition: opacity 0.5s;
+      background: rgba(0,255,204,0.05); border: 1px solid rgba(0,255,204,0.2);
+      padding: 4px 12px; border-radius: 20px; white-space: nowrap;
+    }
+    #proof-ticker.show { opacity: 1; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,255,204,0.3); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+  <!-- TITLE SCREEN -->
+  <div id="title-screen">
+    <canvas id="title-canvas"></canvas>
+    <div class="title-content">
+
+      <div class="hackathon-badge">
+        <div class="dot"></div>
+        TEZOS EVM HACKATHON 2026
+      </div>
+
+      <div class="title-logo">ZK-AI Tribunal</div>
+      <div class="title-sub">Verifiable Fair Play Referee</div>
+
+      <div class="title-stats">
+        <div class="stat-item">
+          <div class="stat-value">$5K</div>
+          <div class="stat-label">Prize Pool</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">ZK</div>
+          <div class="stat-label">Proof System</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">AI</div>
+          <div class="stat-label">Referee</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">⛓</div>
+          <div class="stat-label">On-Chain</div>
+        </div>
+      </div>
+
+      <div class="title-features">
+        <div class="feature-chip">🤖 AI Behavioral Analysis</div>
+        <div class="feature-chip">🔐 ZK Proofs</div>
+        <div class="feature-chip">⛓️ Etherlink Verdicts</div>
+        <div class="feature-chip">🎭 Social Deduction</div>
+        <div class="feature-chip">⚖️ Dispute System</div>
+      </div>
+
+      <button id="btn-start">ENTER TRIBUNAL</button>
+
+      <div class="title-footer">
+        <div class="chain-badge">Deployed on <span>Tezos EVM (Etherlink)</span> · Wild Card Track</div>
+        <div class="compliance-row">
+          <div class="compliance-chip">✓ Open Source</div>
+          <div class="compliance-chip">✓ AI Integrated</div>
+          <div class="compliance-chip">✓ On-Chain Contract</div>
+          <div class="compliance-chip">✓ Original Work</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div id="hud-left">
+      <div class="hud-label">Round</div>
+      <div class="hud-value" id="hud-round">1 / 3</div>
+      <div id="phase-badge">DISCUSSION</div>
+    </div>
+    <div id="hud-right">
+      <div class="hud-label">ZK Proof</div>
+      <div id="zk-status">● IDLE</div>
+      <div class="hud-label" style="margin-top:6px">Timer</div>
+      <div class="hud-value" id="hud-timer">60</div>
+      <div id="wallet-status" title="Click to connect wallet">📴 Offline</div>
+    </div>
+  </div>
+
+  <!-- CHAT LOG -->
+  <div id="chat-log">
+    <h4>📡 Comms</h4>
+    <div id="chat-messages"></div>
+  </div>
+
+  <!-- PLAYER CARDS -->
+  <div id="player-cards"></div>
+
+  <!-- VOTE PANEL -->
+  <div id="vote-panel">
+    <h3>⚖️ Cast Vote</h3>
+    <div id="vote-options"></div>
+    <button id="vote-confirm" disabled>SUBMIT VOTE</button>
+  </div>
+
+  <!-- AI TRIBUNAL PANEL -->
+  <div id="tribunal-panel">
+    <h2>⚖ AI Tribunal</h2>
+    <div id="tribunal-subtitle">ZERO-KNOWLEDGE VERDICT</div>
+    <div id="proof-display"></div>
+    <div id="verdict-box">
+      <div id="verdict-name"></div>
+      <div id="verdict-label"></div>
+      <div id="verdict-reason"></div>
+    </div>
+    <div id="tribunal-actions">
+      <button class="tribunal-btn" id="btn-accept">✓ ACCEPT VERDICT</button>
+      <button class="tribunal-btn" id="btn-dispute">⚠ DISPUTE</button>
+    </div>
+  </div>
+
+  <!-- PHASE OVERLAY -->
+  <div id="phase-overlay">
+    <div id="phase-title"></div>
+    <div id="phase-desc"></div>
+  </div>
+
+  <!-- PROOF TICKER -->
+  <div id="proof-ticker"></div>
+
+  <!-- GAME OVER -->
+  <div id="gameover-overlay" class="hidden">
+    <h1>TRIBUNAL CLOSED</h1>
+    <div id="gameover-result"></div>
+    <div id="gameover-stats"></div>
+    <button id="btn-restart">PLAY AGAIN</button>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
